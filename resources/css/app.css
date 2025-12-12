@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================
+   CUSTOM STYLING: MONOCHROME ELEGANT BACKGROUND
+   ========================================================== */
+
+.bg-monochrome-elegant {
+    /* Base Color: Abu-abu sangat muda (hampir putih) */
+    background-color: #F4F4F4;
+
+    /* Radial Gradient: Memberi ilusi kedalaman dan fokus dari tengah ke tepi */
+    background-image:
+        radial-gradient(circle at center, #FFFFFF 0%, #F0F0F0 100%);
+
+    /* Untuk performa dan tampilan yang halus */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
