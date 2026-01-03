@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Tambahkan import ini
 
 class User extends Authenticatable
 {
@@ -45,6 +46,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * RELASI: Satu User memiliki banyak Karya Seni (Artworks)
+     * Perbaikan untuk error RelationNotFoundException
+     */
+    public function artworks(): HasMany
+    {
+        return $this->hasMany(Artwork::class);
     }
 
     // === RELASI PERBAIKAN UNTUK LIKE (DIHAPUS) ===

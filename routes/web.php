@@ -10,6 +10,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\ArtworkModerationController;
 use App\Http\Controllers\Admin\AdminContestController;
+use App\Http\Controllers\UserProfileController; // Import Controller Web Baru
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -57,7 +58,11 @@ Route::get('artworks/{artwork}', [ArtworkController::class, 'show'])->name('artw
 Route::get('contests', [ContestController::class, 'index'])->name('contests.index'); // Untuk menu "Kompetisi Seni"
 Route::get('contests/{contest}', [ContestController::class, 'show'])->name('contests.show');
 
+<<<<<<< HEAD
 // Autentikasi User
+=======
+// 4. Autentikasi User & Fitur Peserta
+>>>>>>> 400abec99392b2896bbdb5243495ba58dd6f505d
 Route::middleware(['auth'])->group(function () {
     Route::get('/become-peserta', [UserController::class, 'createPesertaApplication'])->name('user.peserta.create');
     Route::post('/upgrade-to-peserta', [UserController::class, 'upgradeToPeserta'])->name('user.upgrade');
@@ -65,6 +70,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('contests/{contest}/submit', [ContestController::class, 'createEntry'])->name('contests.createEntry');
     Route::post('contests/{contest}/submit', [ContestController::class, 'storeEntry'])->name('contests.storeEntry');
     Route::post('entries/{contestEntry}/vote', [ContestController::class, 'vote'])->name('contests.vote');
+
+    // === RUTE PROFIL & SETTINGS ===
+    // Menampilkan profil publik
+    Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
+
+    // Fitur Edit Profil (Hanya untuk pengguna login)
+    Route::get('/profile-settings/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+
+    // PERBAIKAN: Menggunakan patch agar sesuai dengan method di form Blade
+    Route::patch('/profile-settings/update', [UserProfileController::class, 'update'])->name('profile.update');
+
+    // Rute Hapus Profil (Perbaikan Error Route Not Found)
+    Route::delete('/profile-settings', [UserProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';

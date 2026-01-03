@@ -6,58 +6,46 @@
                 {{-- LOGO SVG INLINE MONOKROM --}}
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('landing') }}" class="flex items-center space-x-2 text-gray-900 hover:text-gray-600 transition duration-150">
-
-                        {{-- START: KODE SVG MONOKROM (Mentality Gallery) --}}
                         <svg class="block h-8 w-auto fill-current" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <rect width="100" height="100" fill="white"/>
-
                             <path d="M 15 80 L 15 20 L 50 50 L 85 20 L 85 80"
                                 stroke="currentColor"
                                 stroke-width="8"
                                 fill="none"
                                 stroke-linecap="round"
                                 stroke-linejoin="round"/>
-
                             <circle cx="50" cy="50" r="5" fill="currentColor"/>
                         </svg>
-                        {{-- END: KODE SVG MONOKROM --}}
-
                         <span class="text-lg font-bold ml-2">Mentality</span>
                     </a>
                 </div>
 
                 {{-- NAVIGASI DESKTOP UTAMA --}}
                 <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex items-center">
-
                     @auth
-                        {{-- 1. Dashboard (Dipindahkan ke posisi paling kiri untuk user yang sudah login) --}}
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
                     @endauth
 
-                    {{-- 2. Galeri Terpilih (Publik) --}}
                     <x-nav-link :href="route('gallery.terpilih')" :active="request()->routeIs('gallery.terpilih')">
                         {{ __('Galeri Terpilih') }}
                     </x-nav-link>
 
-                    {{-- 3. Kompetisi Seni (Publik) --}}
                     <x-nav-link :href="route('contests.index')" :active="request()->routeIs('contests.index')">
                         {{ __('Kompetisi Seni') }}
                     </x-nav-link>
 
                     @auth
-                        {{-- 4. Karya Seni Saya (HANYA TAMPIL JIKA USER BUKAN ADMIN) --}}
                         @if (Auth::user()->role !== 'admin')
                             <x-nav-link :href="route('artworks.index')" :active="request()->routeIs('artworks.index')">
                                 {{ __('Karya Seni Saya') }}
                             </x-nav-link>
                         @endif
                     @endauth
-
                 </div>
 
-                {{-- START: Link Admin (Desktop) --}}
+                {{-- Link Admin (Desktop) --}}
                 @if (Auth::check() && Auth::user()->role === 'admin')
                     <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex items-center border-l pl-6">
                         <x-nav-link :href="route('admin.contests.index')" :active="request()->routeIs('admin.contests.index')">
@@ -71,7 +59,6 @@
                         </x-nav-link>
                     </div>
                 @endif
-                {{-- END: Link Admin --}}
             </div>
 
             {{-- Dropdown Profile & Login/Register Buttons (Desktop) --}}
@@ -90,6 +77,13 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        {{-- PERBAIKAN: Mengarah ke rute web profile.show (tanpa 'api.') --}}
+                        <x-dropdown-link :href="route('profile.show', Auth::id())">
+                            {{ __('Profil Saya') }}
+                        </x-dropdown-link>
+
+                        <div class="border-t border-gray-100"></div>
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')"
@@ -102,7 +96,6 @@
                 </x-dropdown>
             </div>
             @else
-            {{-- TAMPILAN JIKA BELUM LOGIN: Link Login dan Register (Desktop) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
                 <a href="{{ route('login') }}" class="text-sm font-medium text-gray-900 hover:text-gray-600 transition duration-150">
                     {{ __('Login') }}
@@ -128,14 +121,11 @@
     {{-- NAVIGASI MOBILE RESPONSIF --}}
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-
             @auth
-                {{-- Tautan User Login (Dashboard di atas) --}}
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
 
-                {{-- Karya Seni Saya (HANYA TAMPIL JIKA BUKAN ADMIN) --}}
                 @if (Auth::user()->role !== 'admin')
                     <x-responsive-nav-link :href="route('artworks.index')" :active="request()->routeIs('artworks.index')">
                         {{ __('Karya Seni Saya') }}
@@ -143,7 +133,6 @@
                 @endif
             @endauth
 
-            {{-- Tautan Publik (Diposisikan di bawah dashboard/karya saya) --}}
             <x-responsive-nav-link :href="route('gallery.terpilih')" :active="request()->routeIs('gallery.terpilih')">
                 {{ __('Galeri Terpilih') }}
             </x-responsive-nav-link>
@@ -152,7 +141,6 @@
                 {{ __('Kompetisi Seni') }}
             </x-responsive-nav-link>
 
-            {{-- START: Link Admin (Mobile) --}}
             @if (Auth::check() && Auth::user()->role === 'admin')
                 <div class="border-t border-gray-200 mt-2 pt-2">
                     <div class="px-4 text-xs font-semibold uppercase text-gray-500">Admin Menu</div>
@@ -167,11 +155,9 @@
                     </x-responsive-nav-link>
                 </div>
             @endif
-            {{-- END: Link Admin --}}
         </div>
 
         @auth
-            {{-- Profil Logout Mobile --}}
             <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
@@ -179,6 +165,11 @@
                 </div>
 
                 <div class="mt-3 space-y-1">
+                    {{-- PERBAIKAN MOBILE: Mengarah ke rute web profile.show --}}
+                    <x-responsive-nav-link :href="route('profile.show', Auth::id())">
+                        {{ __('Profil Saya') }}
+                    </x-responsive-nav-link>
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <x-responsive-nav-link :href="route('logout')"
@@ -190,7 +181,6 @@
                 </div>
             </div>
         @else
-            {{-- TAMPILAN JIKA BELUM LOGIN: Link Login dan Register (Mobile) --}}
             <div class="border-t border-gray-200 pt-2">
                 <x-responsive-nav-link :href="route('login')">
                     {{ __('Login') }}
