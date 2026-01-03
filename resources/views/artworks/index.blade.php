@@ -19,23 +19,31 @@
                     </div>
                 @endif
 
-                {{-- === HEADER KUSTOM (Sesuai Konsep Desain) === --}}
-                <div class="mb-12">
-                    <p class="text-sm tracking-widest text-gray-500 font-medium uppercase">GALERI PRIBADI</p>
-                    <h1 class="text-6xl font-extrabold text-gray-900 mt-2 mb-4">
-                        Karya Seni Saya
-                    </h1>
-                    <p class="text-lg text-gray-700 max-w-3xl mb-8">
-                        Kelola koleksi karya seni pribadi Anda. Upload, edit, dan bagikan karya terbaik Anda kepada komunitas seniman dan pecinta seni di platform kami.
-                    </p>
-                </div>
-                {{-- ============================================= --}}
+                {{-- === HEADER KUSTOM === --}}
+                <div class="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                    <div>
+                        <p class="text-sm tracking-widest text-gray-500 font-medium uppercase">GALERI PRIBADI</p>
+                        <h1 class="text-6xl font-extrabold text-gray-900 mt-2 mb-4">
+                            Karya Seni Saya
+                        </h1>
+                        <p class="text-lg text-gray-700 max-w-3xl">
+                            Kelola koleksi karya seni pribadi Anda. Upload, edit, dan bagikan karya terbaik Anda kepada komunitas.
+                        </p>
+                    </div>
 
-                {{-- KONTROL TOMBOL UPLOAD: Tampilkan untuk User dan Peserta --}}
+                    {{-- Link Cepat ke Profil Publik --}}
+                    @auth
+                        <a href="{{ route('api.profile.show', Auth::id()) }}" class="text-sm font-bold text-black border-b-2 border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition duration-150">
+                            Lihat Profil Publik Saya →
+                        </a>
+                    @endauth
+                </div>
+                {{-- ======================== --}}
+
+                {{-- KONTROL TOMBOL UPLOAD --}}
                 <div class="mb-10">
                     @auth
                         @if (Auth::user()->role !== 'admin')
-                            {{-- Tombol Upload (Gaya Monokrom Hitam) --}}
                             <a href="{{ route('artworks.create') }}" class="bg-black hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded inline-flex items-center transition duration-150">
                                 <i class="fas fa-plus mr-2 text-sm"></i> Unggah Karya Baru
                             </a>
@@ -54,10 +62,17 @@
                         @foreach ($artworks as $artwork)
                             <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition duration-300">
 
-                                {{-- Gambar Karya - DENGAN EFEK HOVER WARNA --}}
-                                <div class="w-full h-48 overflow-hidden">
+                                {{-- Gambar Karya - DENGAN EFEK HOVER --}}
+                                <div class="w-full h-48 overflow-hidden relative group">
                                     <img src="{{ asset('storage/' . $artwork->image_path) }}" alt="{{ $artwork->title }}"
-                                         class="w-full h-full object-cover transition duration-500 ease-in-out grayscale hover:grayscale-0">
+                                         class="w-full h-full object-cover transition duration-500 ease-in-out grayscale group-hover:grayscale-0">
+
+                                    {{-- Overlay Link ke Detail/Profil saat Hover --}}
+                                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition duration-300 flex items-center justify-center">
+                                        <a href="{{ route('api.profile.show', Auth::id()) }}" class="opacity-0 group-hover:opacity-100 bg-white text-black text-xs font-bold py-2 px-4 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition duration-300">
+                                            Preview di Profil
+                                        </a>
+                                    </div>
                                 </div>
 
                                 <div class="p-4">
@@ -65,17 +80,17 @@
                                     <p class="text-sm text-gray-500 mb-3">{{ $artwork->category->name ?? 'Tanpa Kategori' }}</p>
 
                                     {{-- Status Persetujuan --}}
-                                    <span class="text-xs font-semibold mt-1 inline-block rounded px-2 py-0.5
-                                        {{ $artwork->is_approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $artwork->is_approved ? 'Disetujui' : 'Menunggu Moderasi' }}
-                                    </span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold rounded px-2 py-0.5
+                                            {{ $artwork->is_approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                            {{ $artwork->is_approved ? 'Disetujui' : 'Menunggu Moderasi' }}
+                                        </span>
+                                    </div>
 
                                     <div class="flex items-center justify-between mt-4 border-t pt-3">
-
                                         {{-- KONTROL EDIT/HAPUS --}}
                                         @if (Auth::user()->role !== 'admin' && $artwork->user_id === Auth::id())
                                             <div class="space-x-3 text-sm">
-                                                {{-- Tautan Edit dan Hapus disesuaikan ke monokrom/aksi --}}
                                                 <a href="{{ route('artworks.edit', $artwork) }}" class="text-gray-700 hover:text-black font-semibold">Edit</a>
 
                                                 <form action="{{ route('artworks.destroy', $artwork) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus karya ini?');" class="inline">
@@ -87,7 +102,6 @@
                                         @else
                                             <span class="text-sm text-gray-400">Tersedia</span>
                                         @endif
-
                                     </div>
                                 </div>
                             </div>

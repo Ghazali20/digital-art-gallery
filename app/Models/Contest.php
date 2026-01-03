@@ -17,9 +17,17 @@ class Contest extends Model
         'is_active',
     ];
 
-    /**
-     * Relasi ke ContestEntry: Satu Kontes memiliki banyak Entri.
-     */
+    // Accessor untuk menentukan status aktif asli (menggabungkan checkbox & timeline)
+    public function getStatusAktifAttribute()
+    {
+        $now = now();
+        // Aktif jika dicentang DAN waktu sekarang belum melewati end_date
+        if ($this->is_active && $now->lt($this->end_date)) {
+            return 'Aktif';
+        }
+        return 'Tidak Aktif';
+    }
+
     public function entries()
     {
         return $this->hasMany(ContestEntry::class);

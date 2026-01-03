@@ -4,52 +4,47 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // Tambahkan import ini
+use Illuminate\Database\Eloquent\Relations\HasMany;  // Tambahkan import ini
 
 class Artwork extends Model
 {
     use HasFactory;
 
+    /**
+     * Atribut yang dapat diisi (Mass Assignable)
+     */
     protected $fillable = [
         'user_id',
         'category_id',
-        // 'contest_id' dihapus
         'title',
         'description',
         'image_path',
         'is_approved',
     ];
 
-    // Relasi: Karya Seni dimiliki oleh satu User (Seniman)
-    public function user()
+    /**
+     * Relasi Kebalikan: Satu Artwork dimiliki oleh satu User
+     * Sangat penting agar UserProfileController bisa menarik data user
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi: Karya Seni termasuk dalam satu Category
-    public function category()
+    /**
+     * Relasi: Satu Artwork memiliki satu Kategori
+     */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    // Relasi: Satu Karya Seni dapat menjadi Entri di banyak kontes.
-    public function contestEntries()
+    /**
+     * Relasi: Satu Artwork bisa didaftarkan ke banyak entri kontes
+     */
+    public function contestEntries(): HasMany
     {
         return $this->hasMany(ContestEntry::class);
     }
-
-    // === RELASI PERBAIKAN UNTUK LIKE (DIHAPUS) ===
-    // public function likers()
-    // {
-    //     return $this->belongsToMany(User::class, 'likes');
-    // }
-
-    // public function isLikedByUser()
-    // {
-    //     if (Auth::check()) {
-    //         return $this->likers()->where('user_id', Auth::id())->exists();
-    //     }
-    //     return false;
-    // }
-    // =============================
 }

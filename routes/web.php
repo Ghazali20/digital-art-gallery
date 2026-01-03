@@ -6,10 +6,11 @@ use App\Http\Controllers\ArtworkController;
 use App\Http\Controllers\ContestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PageController; // LikeController dihapus
+use App\Http\Controllers\PageController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\ArtworkModerationController;
 use App\Http\Controllers\Admin\AdminContestController;
+use App\Http\Controllers\UserProfileController; // Import Controller Web Baru
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -18,25 +19,18 @@ use Illuminate\Support\Facades\Auth;
 |--------------------------------------------------------------------------
 */
 
-// ==========================================================
-// 0. ROUTE UTAMA / LANDING PAGE (PUBLIK)
-// ==========================================================
+// 0. ROUTE UTAMA / LANDING PAGE
 Route::get('/', function () {
-    // Jika user sudah login, arahkan ke Dashboard
     if (Auth::check()) {
         return redirect()->route('dashboard');
     }
-    // Jika belum login, tampilkan Landing Page yang baru kita buat
     return view('welcome_landing');
 })->name('landing');
 
-
-// Route Dashboard User Standar (Bawaan Breeze)
+// Dashboard User
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-// ==========================================================
-// 1. ROUTE KHUSUS USER (SENIMAN) - CRUD KARYA SENI (EKSPLISIT)
-// ==========================================================
+// 1. ROUTE KHUSUS USER (SENIMAN) - CRUD KARYA SENI
 Route::middleware(['auth'])->prefix('artworks/karya')->name('artworks.')->group(function () {
     Route::get('/', [ArtworkController::class, 'index'])->name('index');
     Route::get('/create', [ArtworkController::class, 'create'])->name('create');
@@ -46,10 +40,7 @@ Route::middleware(['auth'])->prefix('artworks/karya')->name('artworks.')->group(
     Route::delete('/{artwork}', [ArtworkController::class, 'destroy'])->name('destroy');
 });
 
-
-// ==========================================================
-// 2. ROUTE KHUSUS ADMIN - CRUD KATEGORI, MODERASI, KONTES
-// ==========================================================
+// 2. ROUTE KHUSUS ADMIN
 Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('contests', AdminContestController::class);
     Route::resource('categories', CategoryController::class);
@@ -58,11 +49,7 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     Route::delete('moderation/{artwork}/reject', [ArtworkModerationController::class, 'reject'])->name('moderation.reject');
 });
 
-
-// ==========================================================
 // 3. ROUTE KHUSUS USER (PUBLIC) - KONTES DAN GALERI
-// ==========================================================
-// Rute Publik Statis
 Route::get('/galeri/terpilih', [PageController::class, 'selectedGallery'])->name('gallery.terpilih');
 Route::get('/kompetisi/panduan', [PageController::class, 'contestGuide'])->name('contests.guide');
 
@@ -71,18 +58,27 @@ Route::get('artworks/{artwork}', [ArtworkController::class, 'show'])->name('artw
 Route::get('contests', [ContestController::class, 'index'])->name('contests.index');
 Route::get('contests/{contest}', [ContestController::class, 'show'])->name('contests.show');
 
-// Rute yang membutuhkan otentikasi (untuk submit karya, voting, dan upgrade role)
+// 4. Autentikasi User & Fitur Peserta
 Route::middleware(['auth'])->group(function () {
     Route::get('/become-peserta', [UserController::class, 'createPesertaApplication'])->name('user.peserta.create');
     Route::post('/upgrade-to-peserta', [UserController::class, 'upgradeToPeserta'])->name('user.upgrade');
 
-    // RUTE UNTUK LIKE/UNLIKE (DIHAPUS)
-    // Route::post('artworks/{artwork}/like', [LikeController::class, 'toggleLike'])->name('artworks.like');
-
     Route::get('contests/{contest}/submit', [ContestController::class, 'createEntry'])->name('contests.createEntry');
     Route::post('contests/{contest}/submit', [ContestController::class, 'storeEntry'])->name('contests.storeEntry');
     Route::post('entries/{contestEntry}/vote', [ContestController::class, 'vote'])->name('contests.vote');
-});
 
+    // === RUTE PROFIL & SETTINGS ===
+    // Menampilkan profil publik
+    Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
+
+    // Fitur Edit Profil (Hanya untuk pengguna login)
+    Route::get('/profile-settings/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+
+    // PERBAIKAN: Menggunakan patch agar sesuai dengan method di form Blade
+    Route::patch('/profile-settings/update', [UserProfileController::class, 'update'])->name('profile.update');
+
+    // Rute Hapus Profil (Perbaikan Error Route Not Found)
+    Route::delete('/profile-settings', [UserProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 require __DIR__.'/auth.php';
