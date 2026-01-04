@@ -23,19 +23,16 @@
                 </div>
                 {{-- ======================================= --}}
 
-                {{-- === KARTU STATUS BERDASARKAN ROLE (Gaya Monokrom) === --}}
+                {{-- === KARTU STATUS BERDASARKAN ROLE === --}}
                 <div class="p-6 border rounded-lg mb-10 shadow-sm">
-
                     @if (Auth::user()->role === 'admin')
                         <p class="text-lg font-semibold text-red-700">Administrator</p>
                         <p class="text-sm text-gray-600">Anda memiliki akses penuh ke sistem manajemen kontes dan moderasi karya.</p>
                         <a href="{{ route('admin.contests.index') }}" class="mt-3 inline-block bg-black hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded text-sm transition duration-150">Kelola Kontes</a>
-
                     @elseif (Auth::user()->role === 'peserta')
                         <p class="text-lg font-semibold text-green-700">Peserta Aktif</p>
                         <p class="text-sm text-gray-600">Anda dapat mengunggah karya, mendaftar kontes, dan memberikan suara.</p>
                         <a href="{{ route('artworks.index') }}" class="mt-3 inline-block text-black hover:text-gray-700 underline font-semibold text-sm">Lihat Karya Saya &rarr;</a>
-
                     @elseif (Auth::user()->role === 'user')
                         <p class="text-lg font-semibold text-gray-700">Anda saat ini terdaftar sebagai **User Standar**.</p>
                         <p class="text-sm text-gray-600 mb-4">Untuk dapat mendaftarkan diri ke kontes, Anda harus menjadi **Peserta**.</p>
@@ -44,39 +41,28 @@
                         </a>
                     @endif
                 </div>
-                {{-- =============================================== --}}
 
                 <hr class="my-10 border-gray-200">
 
-                {{-- === BLOK STATISTIK (MENGGUNAKAN DATA REAL-TIME) === --}}
+                {{-- === BLOK STATISTIK === --}}
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-
-                    {{-- 1. Kompetisi Aktif --}}
                     <div>
                         <div class="text-4xl font-extrabold text-gray-900">{{ number_format($activeContestsCount ?? 0) }}</div>
                         <div class="text-sm text-gray-500 uppercase tracking-wider mt-1">Kompetisi Aktif</div>
                     </div>
-
-                    {{-- 2. Total Karya --}}
                     <div>
                         <div class="text-4xl font-extrabold text-gray-900">{{ number_format($totalArtworksCount ?? 0) }}</div>
                         <div class="text-sm text-gray-500 uppercase tracking-wider mt-1">Total Karya</div>
                     </div>
-
-                    {{-- 3. Seniman Aktif --}}
                     <div>
                         <div class="text-4xl font-extrabold text-gray-900">{{ number_format($activeArtistsCount ?? 0) }}</div>
                         <div class="text-sm text-gray-500 uppercase tracking-wider mt-1">Seniman Aktif</div>
                     </div>
-
-                    {{-- 4. Pengunjung --}}
                     <div>
                         <div class="text-4xl font-extrabold text-gray-900">{{ $formattedTotalVisitors ?? '0' }}</div>
                         <div class="text-sm text-gray-500 uppercase tracking-wider mt-1">Pengunjung</div>
                     </div>
-
                 </div>
-                {{-- =============================================== --}}
 
                 <hr class="my-10 border-gray-200">
 
@@ -84,44 +70,73 @@
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">💡 Seni & Edukasi</h2>
                 <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
                     <p class="mb-3 text-sm text-gray-700">
-                        Tahukah Anda? Seni bukan sekadar keindahan visual. Seni adalah media ekspresi yang kuat.
-                        Setiap warna yang Anda pilih dan setiap sapuan kuas Anda dapat mencerminkan kondisi mental,
-                        sebuah konsep yang dikenal sebagai **Art Therapy**. Dengan memahami psikologi warna, kita bisa menggunakan palet kita tidak hanya untuk membuat karya,
-                        tapi juga untuk memproses emosi yang kompleks. Teruslah berkarya!
+                        Seni adalah media ekspresi yang kuat. Konsep **Art Therapy** menunjukkan bahwa seni dapat mencerminkan kondisi mental dan memproses emosi yang kompleks.
                     </p>
                 </div>
-                {{-- =============================== --}}
 
-                {{-- === GALERI GLOBAL KARYA YANG DISETUJUI === --}}
+                {{-- === GALERI GLOBAL KARYA YANG DISETUJUI (DENGAN PENCARIAN & FILTER) === --}}
+                <hr class="my-10 border-gray-200">
+
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">🌟 Galeri Karya Pilihan</h2>
+                        <p class="text-md text-gray-600">Eksplorasi karya seni dari seluruh komunitas seniman kami.</p>
+                    </div>
+
+                    {{-- Form Pencarian & Filter Global --}}
+                    <form action="{{ route('dashboard') }}" method="GET" class="flex flex-wrap gap-2">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Cari karya atau seniman..."
+                               class="border-gray-200 rounded-lg text-sm focus:ring-black focus:border-black w-full md:w-64">
+
+                        <select name="category" class="border-gray-200 rounded-lg text-sm focus:ring-black focus:border-black text-gray-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <button type="submit" class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+                            Filter
+                        </button>
+
+                        @if(request('search') || request('category'))
+                            <a href="{{ route('dashboard') }}" class="text-xs text-gray-400 hover:text-black self-center underline ml-1">Reset</a>
+                        @endif
+                    </form>
+                </div>
+
                 @if (isset($globalApprovedArtworks) && $globalApprovedArtworks->isNotEmpty())
-                    <hr class="my-10 border-gray-200">
-
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">🌟 Galeri Karya Pilihan (Semua User)</h2>
-                    <p class="text-md text-gray-600 mb-6">Lihat karya-karya terbaru yang telah disetujui oleh Admin dan ditampilkan di Galeri Utama.</p>
-
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @foreach ($globalApprovedArtworks as $artwork)
-                            <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition duration-300">
-                                <div class="w-full h-40 overflow-hidden">
+                            <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition duration-300 group">
+                                <div class="w-full h-40 overflow-hidden relative">
                                     <a href="{{ route('artworks.show', $artwork) }}">
                                         <img src="{{ asset('storage/' . $artwork->image_path) }}" alt="{{ $artwork->title }}"
-                                            class="w-full h-full object-cover transition duration-500 ease-in-out grayscale hover:grayscale-0">
+                                            class="w-full h-full object-cover transition duration-500 ease-in-out grayscale group-hover:grayscale-0">
                                     </a>
                                 </div>
-                                <div class="p-3 flex justify-between items-center">
-                                    <div>
-                                        <h4 class="font-semibold text-sm truncate text-gray-900">
-                                            <a href="{{ route('artworks.show', $artwork) }}" class="hover:text-gray-700">{{ $artwork->title }}</a>
-                                        </h4>
-                                        <p class="text-xs text-gray-500">Oleh: {{ $artwork->user->name }}</p>
+                                <div class="p-3">
+                                    <h4 class="font-semibold text-sm truncate text-gray-900">
+                                        <a href="{{ route('artworks.show', $artwork) }}" class="hover:text-gray-700">{{ $artwork->title }}</a>
+                                    </h4>
+                                    <div class="flex justify-between items-center mt-1">
+                                        <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Oleh: {{ $artwork->user->name }}</p>
+                                        <span class="text-[9px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ $artwork->category->name ?? 'Umum' }}</span>
                                     </div>
-                                    {{-- BLOK LIKE DIHAPUS TOTAL DI SINI --}}
                                 </div>
                             </div>
                         @endforeach
                     </div>
+                @else
+                    <div class="text-center py-10 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100">
+                        <p class="text-gray-500 italic">Karya tidak ditemukan. Coba gunakan kata kunci lain.</p>
+                    </div>
                 @endif
                 {{-- ============================================= --}}
+
             </div>
         </div>
     </div>

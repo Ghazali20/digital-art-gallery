@@ -10,7 +10,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\ArtworkModerationController;
 use App\Http\Controllers\Admin\AdminContestController;
-use App\Http\Controllers\UserProfileController; // Import Controller Web Baru
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -32,7 +32,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 // 1. ROUTE KHUSUS USER (SENIMAN) - CRUD KARYA SENI
 Route::middleware(['auth'])->prefix('artworks/karya')->name('artworks.')->group(function () {
-    Route::get('/', [ArtworkController::class, 'index'])->name('index'); // Untuk menu "Karya Seni Saya"
+    Route::get('/', [ArtworkController::class, 'index'])->name('index');
     Route::get('/create', [ArtworkController::class, 'create'])->name('create');
     Route::post('/', [ArtworkController::class, 'store'])->name('store');
     Route::get('/{artwork}/edit', [ArtworkController::class, 'edit'])->name('edit');
@@ -44,25 +44,27 @@ Route::middleware(['auth'])->prefix('artworks/karya')->name('artworks.')->group(
 Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('contests', AdminContestController::class);
     Route::resource('categories', CategoryController::class);
+
+    // Rute Moderasi & Kurasi Galeri
     Route::get('moderation', [ArtworkModerationController::class, 'index'])->name('moderation.index');
     Route::put('moderation/{artwork}/approve', [ArtworkModerationController::class, 'approve'])->name('moderation.approve');
     Route::delete('moderation/{artwork}/reject', [ArtworkModerationController::class, 'reject'])->name('moderation.reject');
+
+    // === RUTE BARU: Toggle Kurasi Galeri Terpilih ===
+    Route::patch('moderation/{artwork}/toggle-select', [ArtworkModerationController::class, 'toggleSelect'])->name('moderation.toggleSelect');
 });
 
 // 3. ROUTE KHUSUS USER (PUBLIC) - KONTES DAN GALERI
 Route::get('/galeri/terpilih', [PageController::class, 'selectedGallery'])->name('gallery.terpilih');
 Route::get('/kompetisi/panduan', [PageController::class, 'contestGuide'])->name('contests.guide');
 
-// Rute Publik Kontes & Karya (Agar Navigasi Web Normal)
+// Rute Publik Kontes & Karya
 Route::get('artworks/{artwork}', [ArtworkController::class, 'show'])->name('artworks.show');
-Route::get('contests', [ContestController::class, 'index'])->name('contests.index'); // Untuk menu "Kompetisi Seni"
+Route::get('contests', [ContestController::class, 'index'])->name('contests.index');
 Route::get('contests/{contest}', [ContestController::class, 'show'])->name('contests.show');
 
-<<<<<<< HEAD
-// Autentikasi User
-=======
+
 // 4. Autentikasi User & Fitur Peserta
->>>>>>> 400abec99392b2896bbdb5243495ba58dd6f505d
 Route::middleware(['auth'])->group(function () {
     Route::get('/become-peserta', [UserController::class, 'createPesertaApplication'])->name('user.peserta.create');
     Route::post('/upgrade-to-peserta', [UserController::class, 'upgradeToPeserta'])->name('user.upgrade');
@@ -72,17 +74,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('entries/{contestEntry}/vote', [ContestController::class, 'vote'])->name('contests.vote');
 
     // === RUTE PROFIL & SETTINGS ===
-    // Menampilkan profil publik
     Route::get('/profile/{id}', [UserProfileController::class, 'show'])->name('profile.show');
-
-    // Fitur Edit Profil (Hanya untuk pengguna login)
     Route::get('/profile-settings/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
-
-    // PERBAIKAN: Menggunakan patch agar sesuai dengan method di form Blade
     Route::patch('/profile-settings/update', [UserProfileController::class, 'update'])->name('profile.update');
-
-    // Rute Hapus Profil (Perbaikan Error Route Not Found)
     Route::delete('/profile-settings', [UserProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // === RUTE NOTIFIKASI (FIXED ERROR) ===
+    Route::post('/notifications/mark-as-read', function () {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user) {
+            $user->unreadNotifications->markAsRead();
+        }
+
+        return response()->json(['success' => true]);
+    })->name('notifications.markAsRead');
 });
 
 require __DIR__.'/auth.php';

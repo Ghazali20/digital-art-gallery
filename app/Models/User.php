@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Tambahkan import ini
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -14,15 +14,18 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Atribut yang dapat diisi secara massal (Mass Assignable).
+     * Pastikan field profil baru terdaftar di sini.
      */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role',
+        'profile_photo',    // Tambahan baru
+        'bio',              // Tambahan baru
+        'instagram_handle', // Tambahan baru
+        'portfolio_link',    // Tambahan baru
     ];
 
     /**
@@ -50,17 +53,9 @@ class User extends Authenticatable
 
     /**
      * RELASI: Satu User memiliki banyak Karya Seni (Artworks)
-     * Perbaikan untuk error RelationNotFoundException
      */
     public function artworks(): HasMany
     {
         return $this->hasMany(Artwork::class);
     }
-
-    // === RELASI PERBAIKAN UNTUK LIKE (DIHAPUS) ===
-    // public function likes()
-    // {
-    //     return $this->belongsToMany(Artwork::class, 'likes');
-    // }
-    // =============================
 }

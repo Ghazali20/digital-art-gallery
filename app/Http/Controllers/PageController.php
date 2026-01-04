@@ -9,17 +9,16 @@ class PageController extends Controller
 {
     /**
      * Menampilkan Galeri Karya Terpilih (mengambil data dari DB).
+     * Diperbarui untuk hanya menampilkan karya yang dikurasi oleh Admin.
      */
     public function selectedGallery()
     {
-        // Mengambil 4 karya teratas yang sudah di-approve
+        // Mengambil karya yang sudah di-approve DAN ditandai sebagai pilihan (is_selected)
         $selectedArtworks = Artwork::where('is_approved', true)
-                                   ->with('user')
-                                   // DIHAPUS: ->withCount('likers')
-                                   // DIHAPUS: ->orderByDesc('likers_count')
-                                   ->latest() // Mengurutkan berdasarkan waktu pembuatan (default)
-                                   ->take(4)
-                                   ->get();
+                                   ->where('is_selected', true) // Filter hanya karya hasil kurasi admin
+                                   ->with(['user', 'category'])
+                                   ->latest()
+                                   ->get(); // Mengambil semua karya terpilih tanpa batasan take(4) agar galeri lebih lengkap
 
         return view('gallery.terpilih', compact('selectedArtworks'));
     }
