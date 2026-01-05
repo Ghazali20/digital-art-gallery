@@ -40,7 +40,7 @@ class UserController extends Controller
         // 2. Lakukan perubahan role di database
         $user->role = 'peserta';
 
-        // === TAMBAHAN LOGIKA BARU: Update Nama Akun ===
+        // Update Nama Akun
         $currentName = $user->name;
 
         // Cek apakah nama sudah memiliki label (untuk mencegah duplikasi jika kode dijalankan dua kali)
@@ -48,10 +48,8 @@ class UserController extends Controller
         if (!str_ends_with($currentName, ' (Peserta)')) {
             $user->name = $currentName . ' (Peserta)';
         }
-        // ===============================================
 
-        // Karena Anda sudah menjalankan migration, kolom 'role' kini cukup panjang (misal VARCHAR(20))
-        // untuk menyimpan string 'peserta' tanpa error truncation (Warning: 1265)
+
         $user->save();
 
         // 3. Redirect ke dashboard dengan notifikasi sukses, mencantumkan nama baru

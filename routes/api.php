@@ -47,7 +47,7 @@ Route::as('api.')->group(function () {
         Route::get('moderation/{id}', [AdminController::class, 'showModeration']);
         Route::post('moderation/{id}/approve', [AdminController::class, 'approveArtwork']);
 
-        // CRUD Admin (Biasanya admin punya rute resource terpisah jika butuh logika berbeda)
-        // Jika sama dengan publik, rute di atas (nomor 3) sebenarnya sudah cukup.
+
+       
     });
-}); // <--- Pastikan kurung penutup group ini ada
+});

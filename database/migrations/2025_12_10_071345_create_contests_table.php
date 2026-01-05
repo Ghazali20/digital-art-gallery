@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('contests', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description')->nullable(); // Mengizinkan NULL
-            $table->dateTime('start_date');         //  Menggunakan DateTime
-            $table->dateTime('end_date');           //  Menggunakan DateTime
-            $table->boolean('is_active')->default(true); // Tambahan: Status aktif kontes
+            $table->text('description')->nullable();
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->boolean('is_active')->default(true); 
             $table->timestamps();
         });
     }

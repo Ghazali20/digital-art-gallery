@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Artwork;
-use App\Models\Category; // Tambahkan import Category
+use App\Models\Category;
 use App\Models\Contest;
 use App\Models\User;
 use Carbon\Carbon;
@@ -69,7 +69,7 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'globalApprovedArtworks' => $globalApprovedArtworks,
-            'categories' => $categories, // Kirim variabel categories ke view
+            'categories' => $categories,
             'activeContestsCount' => $activeContestsCount,
             'totalArtworksCount' => $totalArtworksCount,
             'activeArtistsCount' => $activeArtistsCount,

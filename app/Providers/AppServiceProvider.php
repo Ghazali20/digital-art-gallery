@@ -19,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Jika di masa depan Anda ingin memodifikasi komponen Blade secara global,
-        // Anda akan melakukannya di sini, misalnya:
+        // memodifikasi komponen Blade secara global,
+        // melakukannya di sini, misalnya:
         // use Illuminate\Support\Facades\Blade;
         // Blade::component('app.layout', App\View\Components\AppLayout::class);
     }

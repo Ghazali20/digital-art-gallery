@@ -6,20 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Artwork;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-// Import Notifikasi
 use App\Notifications\ArtworkApprovedNotification;
-use App\Notifications\ArtworkRejectedNotification; // Tambahkan import ini
+use App\Notifications\ArtworkRejectedNotification;
 
 class ArtworkModerationController extends Controller
 {
     /**
      * Menampilkan daftar Karya Seni.
-     * Diperbarui agar Admin bisa melihat karya yang sudah approve untuk dikurasi.
+     * Admin bisa melihat karya yang sudah approve untuk dikurasi.
      */
     public function index()
     {
         $artworks = Artwork::with('user', 'category')
-                          ->orderBy('is_approved', 'asc') // Karya pending muncul di atas
+                          ->orderBy('is_approved', 'asc')
                           ->orderBy('created_at', 'desc')
                           ->paginate(15);
 
@@ -57,7 +56,7 @@ class ArtworkModerationController extends Controller
 
         // Membalikkan status boolean secara eksplisit
         $artwork->is_selected = !$artwork->is_selected;
-        $artwork->save(); // Menggunakan save() untuk memastikan data masuk ke DB
+        $artwork->save();
 
         $status = $artwork->is_selected ? 'ditambahkan ke' : 'dihapus dari';
 
@@ -66,7 +65,7 @@ class ArtworkModerationController extends Controller
     }
 
     /**
-     * PERBAIKAN: Menolak (reject) Karya Seni dengan Alasan.
+     * Menolak (reject) Karya Seni dengan Alasan.
      * Alasan dikirim melalui notifikasi sebelum data dihapus.
      */
     public function reject(Request $request, Artwork $artwork)

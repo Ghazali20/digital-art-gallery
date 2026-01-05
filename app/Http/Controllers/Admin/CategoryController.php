@@ -39,7 +39,7 @@ class CategoryController extends Controller
         // 2. Simpan Data
         Category::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name), // Otomatis buat slug dari nama
+            'slug' => Str::slug($request->name),
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan!');
@@ -86,7 +86,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-       
+
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus!');

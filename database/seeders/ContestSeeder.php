@@ -28,7 +28,7 @@ class ContestSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // Kontes ID 3 yang Anda cari
+       
         Contest::create([
             'title' => 'Tantangan Desain Poster',
             'description' => 'Buat poster digital paling inovatif.',

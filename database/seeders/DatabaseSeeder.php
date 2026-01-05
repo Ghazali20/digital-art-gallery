@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class, // (Asumsi ini membuat admin@example.com)
 
             // 2. Data Utama Aplikasi: Kontes, Kategori, dll.
-            ContestSeeder::class, // <-- WAJIB: Untuk membuat data kontes dummy
-            // CategorySeeder::class, // <-- Panggil seeder Kategori jika ada
+            ContestSeeder::class, // Untuk membuat data kontes dummy
+            // CategorySeeder::class, // Panggil seeder Kategori jika ada
         ]);
 
         // (Opsional) Jika Anda ingin membuat user tambahan di sini

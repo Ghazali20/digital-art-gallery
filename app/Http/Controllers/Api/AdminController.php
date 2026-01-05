@@ -38,7 +38,7 @@ class AdminController extends Controller
             return response()->json(['message' => 'Karya tidak ditemukan'], 404);
         }
 
-        // Pastikan kolom 'status' ada di tabel artworks Anda
+        // kolom 'status' ada di tabel artworks Anda
         $artwork->update(['status' => 'approved']);
         return response()->json(['message' => 'Karya berhasil disetujui'], 200);
     }

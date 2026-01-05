@@ -42,8 +42,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        // PERBAIKAN: Mengarahkan user ke Landing Page (/) setelah logout.
+        // Mengarahkan user ke Landing Page (/) setelah logout.
         return redirect('/');
-        // Anda juga bisa menggunakan: return redirect()->route('landing');
     }
 }

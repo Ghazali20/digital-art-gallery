@@ -13,10 +13,10 @@ return new class extends Migration
         Schema::create('contest_entries', function (Blueprint $table) {
             $table->id();
 
-            // Kunci Asing ke Contests (sudah dibuat)
+            // Kunci Asing ke Contests 
             $table->foreignId('contest_id')->constrained()->onDelete('cascade');
 
-            // Kunci Asing ke Artworks (sudah dibuat)
+            // Kunci Asing ke Artworks 
             $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
 
             $table->unique(['contest_id', 'artwork_id']);

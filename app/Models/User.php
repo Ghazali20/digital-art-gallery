@@ -22,10 +22,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'profile_photo',    // Tambahan baru
-        'bio',              // Tambahan baru
-        'instagram_handle', // Tambahan baru
-        'portfolio_link',    // Tambahan baru
+        'profile_photo',   
+        'bio',             
+        'instagram_handle',
+        'portfolio_link',   
     ];
 
     /**

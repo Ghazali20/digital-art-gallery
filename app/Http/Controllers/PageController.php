@@ -18,7 +18,7 @@ class PageController extends Controller
                                    ->where('is_selected', true) // Filter hanya karya hasil kurasi admin
                                    ->with(['user', 'category'])
                                    ->latest()
-                                   ->get(); // Mengambil semua karya terpilih tanpa batasan take(4) agar galeri lebih lengkap
+                                   ->get(); // Mengambil semua karya terpilih tanpa batasan agar galeri lebih lengkap
 
         return view('gallery.terpilih', compact('selectedArtworks'));
     }

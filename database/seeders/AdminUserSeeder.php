@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\User; // Pastikan Model User di-import
-use Illuminate\Support\Facades\Hash; // Untuk mengenkripsi password
+use App\Models\User;
+use Illuminate\Support\Facades\Hash; 
 
 class AdminUserSeeder extends Seeder
 {
@@ -18,8 +18,8 @@ class AdminUserSeeder extends Seeder
         User::create([
             'name' => 'Admin Galeri Utama',
             'email' => 'admin@galeri.com',
-            'password' => Hash::make('password'), // Ganti 'password' dengan password yang lebih kuat di produksi!
-            'role' => 'admin', // 
+            'password' => Hash::make('password'),
+            'role' => 'admin', //
         ]);
 
         // (Opsional) Membuat user biasa untuk testing

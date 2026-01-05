@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Artwork;
 use App\Models\Category;
-use App\Models\User; // Tambahkan import User untuk mencari Admin
-use App\Notifications\NewArtworkSubmittedNotification; // Import Notifikasi Baru
+use App\Models\User;
+use App\Notifications\NewArtworkSubmittedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +41,7 @@ class ArtworkController extends Controller
 
     public function create()
     {
-        // === VALIDASI ROLE: Hanya Admin yang dilarang mengakses form upload ===
+        // VALIDASI ROLE: Hanya Admin yang dilarang mengakses form upload
         if (Auth::user()->role === 'admin') {
             return redirect()->route('artworks.index')
                              ->with('error', 'Administrator tidak diizinkan mengunggah karya di Galeri Pribadi.');
@@ -53,7 +53,7 @@ class ArtworkController extends Controller
 
     public function store(Request $request)
     {
-        // === VALIDASI ROLE: Hanya Admin yang dilarang menyimpan karya ===
+        // Hanya Admin yang dilarang menyimpan karya
         if (Auth::user()->role === 'admin') {
             return redirect()->route('artworks.index')
                              ->with('error', 'Akses ditolak. Administrator tidak dapat membuat karya di Galeri Pribadi.');
@@ -77,12 +77,12 @@ class ArtworkController extends Controller
             'is_approved' => false,
         ]);
 
-        // === FITUR BARU: KIRIM NOTIFIKASI KE SEMUA ADMIN ===
+        // KIRIM NOTIFIKASI KE SEMUA ADMIN
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new NewArtworkSubmittedNotification($artwork));
         }
-        // =========================================================================================
+        
 
         return redirect()->route('artworks.index')->with('success', 'Karya berhasil diunggah dan menunggu moderasi Admin.');
     }

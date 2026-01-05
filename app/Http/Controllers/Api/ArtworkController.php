@@ -26,10 +26,10 @@ class ArtworkController extends Controller
 
         // Memberikan nilai default jika data tidak dikirim di Postman
         if (!isset($data['user_id'])) {
-            $data['user_id'] = 1; // Sesuaikan dengan ID user yang ada di DB Anda
+            $data['user_id'] = 1;
         }
         if (!isset($data['category_id'])) {
-            $data['category_id'] = 1; // Sesuaikan dengan ID kategori yang ada di DB Anda
+            $data['category_id'] = 1;
         }
 
         $artwork = Artwork::create($data);
